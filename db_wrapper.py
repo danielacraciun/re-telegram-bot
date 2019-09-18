@@ -17,7 +17,7 @@ class UserSettings(base):
 
 
 def get_postgres_session():
-    base.metadata.create_all(db)
+    base.metadata.create_all(engine)
     Session = sa.orm.sessionmaker(engine)
     return Session()
 
@@ -33,7 +33,8 @@ def persist_settings_to_db(from_file):
         db_user = session.query(UserSettings).filter_by(chat_id=user)
         options = json.dumps(settings['user_data'][user])
         if db_user.first():
-            db_user.update().values(user_settings=options)
+            db_user.update(values={UserSettings.user_settings: options})
+            session.commit()
         else:
             entry = UserSettings(chat_id=user, user_settings=options)
             try:

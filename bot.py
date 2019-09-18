@@ -49,7 +49,7 @@ def subscribe(update, context):
     persist_settings_to_db(PERSISTENCE_FILE)
     update.message.reply_text(
         'Settings saved! You will receive rental ads with the given settings. '
-        'If you change something, you need to run /activate again!'
+        'If you change something, you need to run /subscribe again!'
     )
 
 
