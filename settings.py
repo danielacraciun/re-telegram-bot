@@ -18,11 +18,11 @@ BOT_TOKEN = environ.get('BOT_TOKEN')
 WITH_DB_PERSISTENCE = True
 PERSISTENCE_FILE = 'settings.pickle'
 
-POSTGRES_USER = 'postgres'
+POSTGRES_USER = environ.get('POSTGRES_USER', 'postgres')
 POSTGRES_PASSWORD = environ.get('POSTGRES_PASSWORD')
 POSTGRES_HOST = environ.get('POSTGRES_HOST', 'localhost')
 POSTGRES_PORT = environ.get('POSTGRES_PORT')
-POSTGRES_DB = 'realestate'
+POSTGRES_DB = environ.get('POSTGRES_DB')
 POSTGRES_DB_STRING = 'postgres://{user}:{password}@{host}:{port}/{db}'.format(
   user=POSTGRES_USER,
   password=POSTGRES_PASSWORD,
