@@ -12,6 +12,16 @@ BOT_ACTIONS = [
     'minrooms',
     'maxrooms',
 ]
+BOT_ACTIONS_TO_HUMAN = {
+    'minprice': 'Minimum price: ',
+    'maxprice': 'Maximum price: ',
+    'minfloor': 'Lowest floor: ',
+    'maxfloor': 'Highest floor: ',
+    'minsurface': 'Minimum surface (in sqm) ',
+    'maxsurface': 'Maximum surface (in sqm) ',
+    'minrooms': 'Minimum number of rooms: ',
+    'maxrooms': 'Maximum number of rooms: ',
+}
 BOT_TOKEN = environ.get('BOT_TOKEN')
 
 # DB persistence settings

@@ -4,7 +4,7 @@ from functools import partial
 from telegram.ext import Updater, CommandHandler, PicklePersistence
 
 from db_wrapper import persist_settings_to_db
-from settings import PERSISTENCE_FILE, BOT_TOKEN, BOT_ACTIONS
+from settings import PERSISTENCE_FILE, BOT_TOKEN, BOT_ACTIONS, BOT_ACTIONS_TO_HUMAN
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ def set_attribute(update, context, attr):
 
 def settings(update, context):
     ud = context.user_data
-    msg = ''.join(['{}: {}\n'.format(k, ud[k]) for k in ud.keys()]) if ud else 'No settings'
+    msg = ''.join(['{}: {}\n'.format(BOT_ACTIONS_TO_HUMAN.get(k, ''), ud[k]) for k in ud.keys()]) if ud else 'No settings'
     update.message.reply_text(msg)
 
 
