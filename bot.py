@@ -3,7 +3,7 @@ import logging
 from functools import partial
 from telegram.ext import Updater, CommandHandler, PicklePersistence
 
-from db_wrapper import persist_settings_to_db
+from db_wrapper import persist_settings_to_db, update_or_create_user_options
 from settings import PERSISTENCE_FILE, BOT_TOKEN, BOT_ACTIONS, BOT_ACTIONS_TO_HUMAN
 
 logger = logging.getLogger(__name__)
@@ -46,11 +46,19 @@ def error(update, context):
 
 
 def subscribe(update, context):
-    persist_settings_to_db(PERSISTENCE_FILE)
+    current_user = update.message.chat_id
+    persist_settings_to_db(current_user)
     update.message.reply_text(
         'Settings saved! You will receive rental ads with the given settings. '
         'If you change something, you need to run /subscribe again!'
     )
+
+
+def unsubscribe(update, context):
+    current_user = update.message.chat_id
+    updated = update_or_create_user_options(current_user, {})
+    msg = 'You have been unsubscribed.' if updated else 'You are not even subscribed!'
+    update.message.reply_text(msg)
 
 
 if __name__ == '__main__':
@@ -64,6 +72,7 @@ if __name__ == '__main__':
     dp.add_handler(CommandHandler('settings', settings))
     dp.add_handler(CommandHandler('clear', clear))
     dp.add_handler(CommandHandler('subscribe', subscribe))
+    dp.add_handler(CommandHandler('unsubscribe', unsubscribe))
     dp.add_error_handler(error)
 
     logger.info('Done! Awaiting commands.')

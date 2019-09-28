@@ -3,7 +3,7 @@ import json
 import sqlalchemy as sa
 from sqlalchemy.ext.declarative import declarative_base
 
-from settings import POSTGRES_DB_STRING
+from settings import POSTGRES_DB_STRING, PERSISTENCE_FILE
 
 engine = sa.create_engine(POSTGRES_DB_STRING)
 base = declarative_base()
@@ -25,20 +25,26 @@ def get_postgres_session():
 session = get_postgres_session()
 
 
-def persist_settings_to_db(from_file):
-    with open(from_file, "rb") as f:
+def update_or_create_user_options(user, options):
+    db_user = session.query(UserSettings).filter_by(chat_id=user)
+
+    if db_user.first():
+        db_user.update(values={UserSettings.user_settings: options})
+        session.commit()
+        return True
+    else:
+        entry = UserSettings(chat_id=user, user_settings=options)
+        try:
+            session.add(entry)
+            session.commit()
+        except:
+            session.rollback()
+        return False
+
+
+def persist_settings_to_db(user):
+    with open(PERSISTENCE_FILE, "rb") as f:
         settings = pickle.load(f)
 
-    for user in settings['user_data']:
-        db_user = session.query(UserSettings).filter_by(chat_id=user)
-        options = json.dumps(settings['user_data'][user])
-        if db_user.first():
-            db_user.update(values={UserSettings.user_settings: options})
-            session.commit()
-        else:
-            entry = UserSettings(chat_id=user, user_settings=options)
-            try:
-                session.add(entry)
-                session.commit()
-            except:
-                session.rollback()
+    options = json.dumps(settings['user_data'].get(user), {})
+    update_or_create_user_options(user, options)
