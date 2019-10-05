@@ -47,4 +47,4 @@ def persist_settings_to_db(user):
         settings = pickle.load(f)
 
     options = json.dumps(settings['user_data'].get(user), {})
-    update_or_create_user_options(user, options)
+    update_or_create_user_options(user, str(options))
